@@ -1,37 +1,28 @@
 import React from 'react';
 import ProductList from '../Product/ProductList';
+import * as firebase from 'firebase';
+
 
 class HomePage extends React.Component{
   constructor(){
     super();
     this.state = {
-      productList: [
-        {
-          id: 1,
-          name: 'Github cstamariab',
-          link: 'https://github.com/cstamariab',
-          media: '/img/react-logo.png',
-          upvote: 238,
-          description: 'Code for anyone',
-          maker: {
-            name: "Christian",
-            avatar: "/img/yo.jpg"
-          }
-        },
-        {
-          id: 2,
-          name: 'Linkedin cstamariab',
-          link: 'https://linkedin.com/cstamariab',
-          media: '/img/react-logo.png',
-          upvote: 124,
-          description: 'Work for anyone',
-          maker: {
-            name: "Thomas",
-            avatar: "/img/otro.jpg"
-          }
-        }
-      ]
+      productList: []
     }
+    var config = {
+      apiKey: "AIzaSyDs3yrciL4qD2KGY3dpPN6P6mz2gg56lJE",
+      authDomain: "codehunt-demo-101ab.firebaseapp.com",
+      databaseURL: "https://codehunt-demo-101ab.firebaseio.com/",
+      storageBucket: "codehunt-demo-101ab.appspot.com",
+      messagingSenderId: "323824725829"
+    };
+    var app = firebase.initializeApp(config);
+    var database = app.database();
+    
+    database.ref('products').once('value', snap => {
+      let products = snap.val();     
+      this.setState({productList: products})
+    });
   }
 
   render(){
