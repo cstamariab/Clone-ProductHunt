@@ -16,7 +16,7 @@ class App extends React.Component {
     return(
       <div>
       	
-      	<NavBar user={true}/>
+      	<NavBar user={false}/>
         <HomePage />
       </div>
     );
