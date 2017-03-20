@@ -32,13 +32,13 @@ class ProfileMenu extends React.Component {
 	render(){
 		return(
 			<section className="profile-menu" > 
-				<img src="/img/yo.jpg" onClick={this.handleProfileMenu}  className="profile-btn medium-avatar"  ref="profileBtn"/>
+				<img src={this.props.user.avatar} onClick={this.handleProfileMenu}  className="profile-btn medium-avatar"  ref="profileBtn"/>
 				{
 					this.state.showProfilenav ?
 					<nav className="profile-nav" ref="profileNav">
-						<a href="#" onClick={this.props.handlePopup}>New Product</a>
+						<a href="#" onClick={this.props.showPopup}>New Product</a>
 						<a href="#" >My Profile</a>
-						<a href="#" >Logout</a>
+						<a href="#" onClick={this.props.handleLogout}>Logout</a>
 					</nav>
 					: ''
 				}

@@ -4,9 +4,11 @@ class Popup extends React.Component{
 
 	renderPopupContent(){
 		return(
-			<section className="popup" onClick={this.props.handleProductPopup}>
+			<section className="popup">
 				<section className="popup-wrap">
-					<img  onClick={this.props.handlePopup}  src="/img/close.png" />
+					<img  
+						onClick={this.props.hidePopup}  
+						src="/img/close.png" />
 				</section>
 				<section className={"popup-content " + this.props.style}>
 					<section>{this.props.children}</section>

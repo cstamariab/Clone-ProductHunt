@@ -1,6 +1,11 @@
 import React from 'react';
 import ProductPopup from './ProductPopup';
+import Actions from '../../actions';
+import connectToStores from 'alt-utils/lib/connectToStores';
+import ProductStore from '../../stores/ProductStore';
+import Upvote from './Upvote';
 
+@connectToStores
 class ProductItem extends React.Component{
   constructor(props) {
     super(props);
@@ -9,20 +14,19 @@ class ProductItem extends React.Component{
       productPopupStatus : false
     };
   }
-  handleProductPopup = () => {
-    this.setState({productPopupStatus: !this.state.productPopupStatus})
-  };
-  renderUpvoteButton(){
-    return(
-      <div>
-        <a className="upvote-button" href="#">
-          <span className="fa fa-sort-asc"></span>
-          <br />
-          {this.props.upvote}
-        </a>
-      </div>
-    )
+  static getStores(){
+    return [ProductStore];
   }
+  static getPropsFromStores(){
+    return ProductStore.getState();
+  }
+  showPopUp = () => {
+    this.setState({productPopupStatus: true})
+  };
+  hidePopup = () => {
+    this.setState({productPopupStatus: false})
+  };
+  
   renderNewWindowIcon(){
     return(
         <a className="product-item-link" href={this.props.link}>
@@ -35,7 +39,7 @@ class ProductItem extends React.Component{
   renderProductInfo(){
     return(
       <section className="product-item-info">
-        <a href="#" onClick={this.handleProductPopup}>
+        <a href="#" onClick={this.showPopUp}>
           <h2>{this.props.name}</h2>
         </a>
         <p>{this.props.description}</p>
@@ -49,11 +53,15 @@ class ProductItem extends React.Component{
 
 		return(
 			<li className="product-item">
-        {this.renderUpvoteButton()}
+        <Upvote   {...this.props} />
         <img className="product-item-media" src={this.props.media} />
         {this.renderProductInfo()}
         {this.renderNewWindowIcon()}
-        <ProductPopup status={this.state.productPopupStatus} handleProductPopup={this.handleProductPopup}/>
+        <ProductPopup 
+          {...this.props} 
+          status={this.state.productPopupStatus} 
+          hidePopup={this.hidePopup} 
+          />
       </li>
 		);
 	}

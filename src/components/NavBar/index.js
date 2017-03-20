@@ -2,6 +2,8 @@ import React from 'react';
 import LoginPopup from './LoginPopup';
 import PostPopup from './PostPopup';
 import ProfileMenu from './ProfileMenu';
+import Actions from '../../actions';
+
 class Navbar extends React.Component {
 	constructor() {
 	  super();
@@ -12,9 +14,18 @@ class Navbar extends React.Component {
 	  };
 	}
 
-	handlePopup = () => {
-		this.setState({popupStatus : !this.state.popupStatus})
-	};
+    showPopup = () => {
+        this.setState({popupStatus: true});
+    };
+    
+    hidePopup = () => {
+        this.setState({popupStatus: false});
+    };
+
+	handleLogout = (e) => {
+		e.preventDefault();
+		Actions.logout();
+	}
 
 	renderProductSearch(){
 		return(
@@ -43,16 +54,16 @@ class Navbar extends React.Component {
 					<section>
 						<span className="login-btn">
 																			
-							  <ProfileMenu  handlePopup={this.handlePopup}/>
+							  <ProfileMenu user={this.props.user} handleLogout={this.handleLogout} showPopup={this.showPopup}/>
 							
 						</span>
-						<PostPopup status={this.state.popupStatus} handlePopup={this.handlePopup} />
+						<PostPopup user={this.props.user} status={this.state.popupStatus} hidePopup={this.hidePopup} />
 						
 					</section>
 					:
 					<section>						
-						<a href="#" onClick={this.handlePopup} className="login-btn">Login </a>						
-						<LoginPopup status={this.state.popupStatus} handlePopup={this.handlePopup} />
+						<a href="#" onClick={this.showPopup}  className="login-btn">Login </a>						
+						<LoginPopup status={this.state.popupStatus} hidePopup={this.hidePopup} />
 					</section>
 				}
 			</section>						

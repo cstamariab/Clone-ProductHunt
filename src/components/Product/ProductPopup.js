@@ -1,56 +1,113 @@
 import React from 'react';
 import Popup from '../NavBar/Popup';
+import Upvote from './Upvote';
 
+import Actions from '../../actions';
+import connectToStores from 'alt-utils/lib/connectToStores';
+import ProductStore from '../../stores/ProductStore';
+
+@connectToStores
 class ProductPopup extends React.Component{
 	constructor(props) {
 	  super(props);
-	
 	  this.state = {
-		  	product:{
-	          id: 1,
-	          name: 'Github cstamariab',
-	          link: 'https://github.com/cstamariab',
-	          media: '/img/banner-web-development.png',
-	          upvote: 238,
-	          description: 'Code for anyone',
-	          maker: {
-	            name: "Christian",
-	            avatar: "/img/yo.jpg"
-	          }
-	        }
-	  };
+
+	  }
 	}
-	renderUpvoteButton(){
-	    return(
-	      <section>
-	        <a className="upvote-button" href="#">
-	          <span className="fa fa-sort-asc"></span>
-	          <br /> 
-	          {this.state.product.upvote}
-	        </a>
-	      </section>
-	    )
+	static getStores(){
+		return [ProductStore];
 	}
+	static getPropsFromStores(){
+		return ProductStore.getState();
+	}
+    shouldComponentUpdate(nextProps, nextState){
+        if(nextProps.status && this.props.status != nextProps.status){
+            Actions.getComments(this.props.pid);    
+        }
+        
+        return true;
+    }
 	renderheader(){
 		return(
-			<header style={{backgroundImage: 'url('+this.state.product.media+')'}} >
+			<header style={{backgroundImage: 'url('+this.props.media+')'}} >
 				<section className="header-shadow">
-					<h1>{this.state.product.name}</h1>
-					<p>{this.state.product.description}</p>
+					<h1>{this.props.name}</h1>
+					<p>{this.props.description}</p>
 					<section>
-						{this.renderUpvoteButton()}
-						<a className="getit-btn" href={this.state.product.link} target="_blank"> GET IT </a>
+						 <Upvote   {...this.props} />
+						<a className="getit-btn" href={this.props.link} target="_blank"> GET IT </a>
 					</section>
 				</section>
 			</header>
 		);
 	}
+	handleComment = (e) => {
+		if (e.keyCode === 13 && e.target.value.length > 0) {
+			var comment = {
+				content : e.target.value,
+				name: this.props.user.name,
+				avatar: this.props.user.avatar
+			}
+			Actions.addComment(this.props.pid , comment);
+			e.target.value = null;
+		}
+	};
+	renderBody(){
+        return (
+            <section className="product-popup-body">
+                <main>
+                    {this.renderBodyDiscussion()}
+                </main>
+            </section>
+        );
+    }
+    renderBodyDiscussion(){
+        return(
+            <section className="discussion">
+                <h2>Discussion</h2>
+                {
+                    this.props.user
+                    ?
+                    <section className="postComment">
+                        <img className="medium-avatar" src={this.props.user.avatar}/>
+                        <input placeholder="What do you think of this product?" onKeyUp={this.handleComment} />
+                    </section>
+                    :
+                    null
+                }
+                {this.renderComments()}
+            </section>
+        );
+    }
+
+	renderComments(){
+        return(
+            <ul className="comment-list">
+                {
+                   this.props.comments != null ?
+                    this.props.comments.map(function(comment, idx){
+                        return(
+                            <li key={idx}>
+                                <img className="medium-avatar" src={comment.avatar}/>
+                                <section>
+                                    <strong>{comment.name}</strong>
+                                    <p>{comment.content}</p>
+                                </section>
+                            </li>
+                        );
+                    })
+                   : null
+                }
+            </ul>
+        );
+    }
 	render(){
 		return(
 			<section>
 				
-				<Popup {...this.props} style="product-popup" >
+				<Popup  {...this.props} style="product-popup" hidePopup={this.props.hidePopup} >
 					{this.renderheader()}
+					{this.renderBody()}
 				</Popup>
 			</section>
 		);
